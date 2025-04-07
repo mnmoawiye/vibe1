@@ -36,8 +36,7 @@ const basketball = {
     inAir: false,
     rotation: 0,
     rotationSpeed: 0.1,
-    lastX: 150,
-    lastY: 450
+    lastShotTime: 0
 };
 
 const court = {
@@ -193,19 +192,19 @@ function update() {
 
     // Basketball physics
     if (basketball.inAir) {
-        // Store last position for collision detection
-        basketball.lastX = basketball.x;
-        basketball.lastY = basketball.y;
-
-        // Update position
         basketball.x += basketball.velocityX;
         basketball.y += basketball.velocityY;
         basketball.velocityY += 0.8; // Gravity
         basketball.rotation += basketball.rotationSpeed;
 
-        // Ground collision with improved detection
-        if (basketball.y + basketball.radius > 450) {
-            basketball.y = 450 - basketball.radius;
+        // Check if ball has been in air for more than 5 seconds
+        if (Date.now() - basketball.lastShotTime > 5000) {
+            resetBasketball();
+        }
+
+        // Ground collision
+        if (basketball.y > 450) {
+            basketball.y = 450;
             basketball.velocityY = -basketball.velocityY * 0.6; // Bounce
             basketball.velocityX *= 0.8; // Friction
             
@@ -217,28 +216,15 @@ function update() {
             }
         }
 
-        // Backboard collision with improved detection
-        if (basketball.x + basketball.radius > hoop.backboard.x && 
-            basketball.x - basketball.radius < hoop.backboard.x + hoop.backboard.width &&
-            basketball.y + basketball.radius > hoop.backboard.y && 
-            basketball.y - basketball.radius < hoop.backboard.y + hoop.backboard.height) {
-            
-            // Determine which side of the backboard was hit
-            if (Math.abs(basketball.x - hoop.backboard.x) < Math.abs(basketball.x - (hoop.backboard.x + hoop.backboard.width))) {
-                basketball.x = hoop.backboard.x - basketball.radius;
-            } else {
-                basketball.x = hoop.backboard.x + hoop.backboard.width + basketball.radius;
-            }
-            
+        // Backboard collision
+        if (basketball.x > hoop.backboard.x && basketball.x < hoop.backboard.x + hoop.backboard.width &&
+            basketball.y > hoop.backboard.y && basketball.y < hoop.backboard.y + hoop.backboard.height) {
             basketball.velocityX = -basketball.velocityX * 0.8;
         }
 
-        // Hoop collision and scoring with improved detection
-        if (basketball.x + basketball.radius > hoop.x && 
-            basketball.x - basketball.radius < hoop.x + hoop.width &&
-            basketball.y + basketball.radius > hoop.y && 
-            basketball.y - basketball.radius < hoop.y + hoop.height) {
-            
+        // Hoop collision and scoring
+        if (basketball.x > hoop.x && basketball.x < hoop.x + hoop.width &&
+            basketball.y > hoop.y && basketball.y < hoop.y + hoop.height) {
             const distance = Math.sqrt(Math.pow(basketball.x - 500, 2) + Math.pow(basketball.y - 500, 2));
             const points = distance > 200 ? 3 : 2;
             score += points;
@@ -246,8 +232,8 @@ function update() {
             setTimeout(resetBasketball, 500);
         }
 
-        // Out of bounds with improved detection
-        if (basketball.x - basketball.radius < 0 || basketball.x + basketball.radius > canvas.width) {
+        // Out of bounds
+        if (basketball.x < 0 || basketball.x > canvas.width) {
             resetBasketball();
         }
     }
@@ -256,6 +242,7 @@ function update() {
 function shootBasketball() {
     if (player.power >= player.powerUsage) {
         basketball.inAir = true;
+        basketball.lastShotTime = Date.now(); // Record when the shot was taken
         const power = player.charge / 100;
         
         // Calculate shooting position relative to player's current position
@@ -266,7 +253,7 @@ function shootBasketball() {
         basketball.x = shootX;
         basketball.y = shootY;
         
-        // Apply shooting force with adjusted values for better scoring
+        // Apply shooting force
         basketball.velocityX = 12 * power * player.direction;
         basketball.velocityY = -18 * power;
         
@@ -288,6 +275,7 @@ function resetBasketball() {
     basketball.rotation = 0;
     basketball.x = player.x + (player.width/2) + (20 * player.direction);
     basketball.y = player.y;
+    basketball.lastShotTime = 0;
 }
 
 function draw() {

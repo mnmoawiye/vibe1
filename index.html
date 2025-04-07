@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Basketball Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+        #gameContainer {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        canvas {
+            background: linear-gradient(to bottom, #87CEEB, #1E90FF);
+            border-radius: 10px;
+        }
+        #gameUI {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+        #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+        button {
+            background: linear-gradient(135deg, #FF4500, #FF8C00);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+        }
+        #controls {
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="1000" height="600"></canvas>
+        <div id="gameUI">
+            <div>Score: <span id="score">0</span></div>
+            <div>Time: <span id="time">60</span>s</div>
+            <div>Power: <span id="power">100</span>%</div>
+        </div>
+        <div id="startScreen">
+            <h1>Advanced Basketball Game</h1>
+            <div id="controls">
+                <p>← → : Move</p>
+                <p>Space: Jump</p>
+                <p>Hold Space: Charge Shot</p>
+                <p>Release Space: Shoot</p>
+                <p>Shift: Sprint</p>
+            </div>
+            <button id="startButton">Start Game</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html> 
